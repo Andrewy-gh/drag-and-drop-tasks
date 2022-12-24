@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
-  border: 1px solid lightgrey;
+  border: 3px solid lightgrey;
   padding: 8px;
   margin-bottom: 8px;
-  border-radius: 2px;
+  // border-radius: 2px;
   background-color: ${(props) =>
     props.isDragDisabled
       ? 'lightgrey'
@@ -13,6 +13,19 @@ const Container = styled.div`
       ? 'lightgreen'
       : 'white'};
   display: flex;
+
+  // horizontal list
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:focus {
+    outline: none;
+    border-color: red;
+  }
 `;
 
 const Handle = styled.div`
@@ -41,7 +54,8 @@ const Task = ({ task, index }) => {
           isDragDisabled={isDragDisabled}
         >
           <Handle {...provided.dragHandleProps} />
-          {task.content}
+          {task.content[0]}
+          {/* {task.content} */}
         </Container>
       )}
     </Draggable>

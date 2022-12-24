@@ -6,7 +6,9 @@ const Container = styled.div`
   margin: 8px;
   border: 1px solid lightgrey;
   border-radius: 2px;
-  width: 220px;
+
+  // removed for horizontal lists
+  // width: 220px;
 
   display: flex;
   flex-direction: column;
@@ -18,8 +20,13 @@ const TaskList = styled.div`
   padding: 8px;
   transiton: background-color 0.2s ease;
   background-color: ${(props) => (props.isDraggingOver ? 'skyblue' : 'white')};
-  flex-grow: 1;
-  min-height: 100px;
+
+  // removed for horizontal lists
+  // flex-grow: 1;
+  // min-height: 100px;
+
+  // added horizontal lists exercise
+  display: flex;
 `;
 const Column = ({ column, tasks, isDropDisabled }) => {
   return (
@@ -33,6 +40,8 @@ const Column = ({ column, tasks, isDropDisabled }) => {
 
           // 2nd mechanism to prevent dropping
           isDropDisabled={isDropDisabled}
+          // horizontal dropping
+          direction="horizontal"
         >
           {(provided, snapshot) => (
             <TaskList
