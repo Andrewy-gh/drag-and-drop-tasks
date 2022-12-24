@@ -21,12 +21,19 @@ const TaskList = styled.div`
   flex-grow: 1;
   min-height: 100px;
 `;
-const Column = ({ column, tasks }) => {
+const Column = ({ column, tasks, isDropDisabled }) => {
   return (
     <>
       <Container>
         <Title>{column.title}</Title>
-        <Droppable droppableId={column.id}>
+        <Droppable
+          droppableId={column.id}
+          // 1st mechanism to control droppable allows to drop in columns except column-3
+          // type={column.id === 'column-3' ? 'done' : 'active'}
+
+          // 2nd mechanism to prevent dropping
+          isDropDisabled={isDropDisabled}
+        >
           {(provided, snapshot) => (
             <TaskList
               ref={provided.innerRef}

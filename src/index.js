@@ -12,10 +12,14 @@ const Container = styled.div`
 
 const App = () => {
   const [data, setData] = useState(initialData);
+  const [homeIndex, setHomeIndex] = useState(null);
 
-  const onDragStart = () => {
+  const onDragStart = (start) => {
     document.body.style.color = 'orange';
     document.body.style.transition = 'background-color 0.2s ease';
+
+    // Drop Disabled
+    setHomeIndex(data.columnOrder.indexOf(start.source.droppableId));
   };
 
   const onDragUpdate = (update) => {
@@ -29,6 +33,8 @@ const App = () => {
   const onDragEnd = (result) => {
     document.body.style.color = 'inherit';
     document.body.style.backgroundColor = 'inherit';
+
+    setHomeIndex(null);
 
     const { destination, source, draggableId } = result;
     if (!destination) return;
@@ -60,7 +66,8 @@ const App = () => {
       };
       setData(newState);
       // this return is in tutorial
-      // return
+      // new to prevent duplicate items in same column
+      return;
     }
 
     // Moving from one list to another
@@ -94,10 +101,18 @@ const App = () => {
       onDragEnd={onDragEnd}
     >
       <Container>
-        {data.columnOrder.map((columnId) => {
+        {data.columnOrder.map((columnId, index) => {
           const column = data.columns[columnId];
           const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
-          return <Column key={column.id} column={column} tasks={tasks} />;
+          const isDropDisabled = index < homeIndex;
+          return (
+            <Column
+              key={column.id}
+              column={column}
+              tasks={tasks}
+              isDropDisabled={isDropDisabled}
+            />
+          );
         })}
       </Container>
     </DragDropContext>
