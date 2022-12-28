@@ -12,32 +12,14 @@ const Container = styled.div`
 
 const App = () => {
   const [data, setData] = useState(initialData);
-  const [homeIndex, setHomeIndex] = useState(null);
-
-  const onDragStart = (start) => {
-    document.body.style.color = 'orange';
-    document.body.style.transition = 'background-color 0.2s ease';
-
-    // Drop Disabled
-    setHomeIndex(data.columnOrder.indexOf(start.source.droppableId));
-  };
-
-  const onDragUpdate = (update) => {
-    const { destination } = update;
-    const opacity = destination
-      ? destination.index / Object.keys(data.tasks).length
-      : 0;
-    document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`;
-  };
 
   const onDragEnd = (result) => {
     document.body.style.color = 'inherit';
     document.body.style.backgroundColor = 'inherit';
 
-    setHomeIndex(null);
-
     const { destination, source, draggableId } = result;
     if (!destination) return;
+
     // if destination and source are the same
     if (
       destination.droppableId === source.droppableId &&
@@ -65,8 +47,6 @@ const App = () => {
         },
       };
       setData(newState);
-      // this return is in tutorial
-      // new to prevent duplicate items in same column
       return;
     }
 
@@ -94,25 +74,14 @@ const App = () => {
     };
     setData(newState);
   };
+
   return (
-    <DragDropContext
-      onDragStart={onDragStart}
-      onDragUpdate={onDragUpdate}
-      onDragEnd={onDragEnd}
-    >
+    <DragDropContext onDragEnd={onDragEnd}>
       <Container>
         {data.columnOrder.map((columnId, index) => {
           const column = data.columns[columnId];
           const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
-          const isDropDisabled = index < homeIndex;
-          return (
-            <Column
-              key={column.id}
-              column={column}
-              tasks={tasks}
-              isDropDisabled={isDropDisabled}
-            />
-          );
+          return <Column key={column.id} column={column} tasks={tasks} />;
         })}
       </Container>
     </DragDropContext>
