@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styled from 'styled-components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Task from './task';
@@ -18,10 +19,24 @@ const TaskList = styled.div`
   padding: 8px;
   transiton: background-color 0.2s ease;
   background-color: ${(props) =>
-    props.isDraggingOver ? 'skyblue' : 'inherit'};
+    props.isDraggingOver ? 'lightgrey' : 'inherit'};
   flex-grow: 1;
   min-height: 100px;
 `;
+
+// const InnerList = memo(({ tasks }) => {
+//   return tasks.map((task, index) => (
+//     <Task key={task.id} task={task} index={index} />
+//   ));
+// }, areTasksEqual);
+
+// function areTasksEqual(prevProps, nextProps) {
+//   if (prevProps.tasks === nextProps.tasks) {
+//     return false;
+//   }
+//   return true;
+// }
+
 const Column = ({ column, tasks, index }) => {
   return (
     <Draggable draggableId={column.id} index={index}>
@@ -35,6 +50,7 @@ const Column = ({ column, tasks, index }) => {
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
+                {/* <InnerList tasks={tasks} /> */}
                 {tasks.map((task, index) => (
                   <Task key={task.id} task={task} index={index} />
                 ))}

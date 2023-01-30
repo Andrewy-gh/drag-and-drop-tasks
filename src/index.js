@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import ReactDOM from 'react-dom/client';
 import styled from 'styled-components';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
@@ -9,6 +9,11 @@ import Column from './column';
 const Container = styled.div`
   display: flex;
 `;
+
+// const InnerList = memo(function InnerList({ column, taskMap, index }) {
+//   const tasks = column.taskIds.map((taskId) => taskMap[taskId]);
+//   return <Column column={column} tasks={tasks} index={index} />;
+// });
 
 const App = () => {
   const [data, setData] = useState(initialData);
@@ -114,6 +119,7 @@ const App = () => {
             {data.columnOrder.map((columnId, index) => {
               const column = data.columns[columnId];
               const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
+
               return (
                 <Column
                   key={column.id}
@@ -121,6 +127,12 @@ const App = () => {
                   tasks={tasks}
                   index={index}
                 />
+                // <InnerList
+                //   key={column.id}
+                //   column={column}
+                //   taskMap={data.tasks}
+                //   index={index}
+                // />
               );
             })}
             {provided.placeholder}
