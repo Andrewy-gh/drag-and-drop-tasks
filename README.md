@@ -1,6 +1,6 @@
 # Drag and Drop tasks.
 
-Kanaban board that uses the `react-beautiful-dnd` library. Tasks can be dragged and dropped into their appropiate section.
+Kanban board that uses the `react-beautiful-dnd` library. Tasks can be dragged and dropped into their appropiate section.
 
 **Link to project:** https://dnd-task-app.netlify.app/
 [![Video](https://github.com/Andy-git985/drag-and-drop-tasks/assets/17731837/b27e5962-db91-4afe-bbf3-d77a23de726a)]
