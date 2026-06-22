@@ -1,24 +1,48 @@
-import { memo, useState } from 'react';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import Column from './components/column';
-import styled from 'styled-components';
-import initialData from './initial-data';
-
-const Container = styled.div`
-  display: flex;
-`;
-
-// const InnerList = memo(function InnerList({ column, taskMap, index }) {
-//   const tasks = column.taskIds.map((taskId) => taskMap[taskId]);
-//   return <Column column={column} tasks={tasks} index={index} />;
-// });
+import { useState } from "react";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import Column from "./components/column";
+import initialData from "./initial-data";
+import {
+  addTodoToBoard,
+  deleteTodoFromBoard,
+  loadBoardData,
+  saveBoardData,
+} from "./board-state.mjs";
+import "./App.css";
 
 const App = () => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(() => loadBoardData(initialData));
+  const [todoContent, setTodoContent] = useState("");
+
+  const commitData = (nextData) => {
+    setData(nextData);
+    saveBoardData(nextData);
+  };
+
+  const onAddTodo = (event) => {
+    event.preventDefault();
+
+    const nextData = addTodoToBoard(data, todoContent);
+    if (nextData === data) {
+      return;
+    }
+
+    commitData(nextData);
+    setTodoContent("");
+  };
+
+  const onDeleteTodo = (taskId) => {
+    const nextData = deleteTodoFromBoard(data, taskId);
+    if (nextData === data) {
+      return;
+    }
+
+    commitData(nextData);
+  };
 
   const onDragStart = (start) => {
-    document.body.style.color = 'orange';
-    document.body.style.transition = 'background-color 0.2s ease';
+    document.body.style.color = "orange";
+    document.body.style.transition = "background-color 0.2s ease";
   };
 
   const onDragUpdate = (update) => {
@@ -30,8 +54,8 @@ const App = () => {
   };
 
   const onDragEnd = (result) => {
-    document.body.style.color = 'inherit';
-    document.body.style.backgroundColor = 'inherit';
+    document.body.style.color = "inherit";
+    document.body.style.backgroundColor = "inherit";
 
     const { destination, source, draggableId, type } = result;
     if (!destination) return;
@@ -42,7 +66,7 @@ const App = () => {
       return;
     }
 
-    if (type === 'column') {
+    if (type === "column") {
       const newColumnOrder = Array.from(data.columnOrder);
       newColumnOrder.splice(source.index, 1);
       newColumnOrder.splice(destination.index, 0, draggableId);
@@ -51,7 +75,7 @@ const App = () => {
         ...data,
         columnOrder: newColumnOrder,
       };
-      setData(newState);
+      commitData(newState);
       return;
     }
 
@@ -73,7 +97,7 @@ const App = () => {
           [newColumn.id]: newColumn,
         },
       };
-      setData(newState);
+      commitData(newState);
       return;
     }
 
@@ -99,45 +123,63 @@ const App = () => {
         [newFinish.id]: newFinish,
       },
     };
-    setData(newState);
+    commitData(newState);
   };
   return (
-    <DragDropContext
-      onDragStart={onDragStart}
-      onDragUpdate={onDragUpdate}
-      onDragEnd={onDragEnd}
-    >
-      <Droppable
-        droppableId="all-collumns"
-        direction="horizontal"
-        type="column"
+    <>
+      <form
+        className="add-todo-form"
+        onSubmit={onAddTodo}
+        aria-label="Add new todo"
       >
-        {(provided) => (
-          <Container {...provided.droppableProps} ref={provided.innerRef}>
-            {data.columnOrder.map((columnId, index) => {
-              const column = data.columns[columnId];
-              const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
+        <label className="add-todo-label" htmlFor="new-todo">
+          New todo
+        </label>
+        <input
+          className="add-todo-input"
+          id="new-todo"
+          value={todoContent}
+          onChange={(event) => setTodoContent(event.target.value)}
+          placeholder="Add a task"
+        />
+        <button type="submit">Add todo</button>
+      </form>
+      <DragDropContext
+        onDragStart={onDragStart}
+        onDragUpdate={onDragUpdate}
+        onDragEnd={onDragEnd}
+      >
+        <Droppable
+          droppableId="all-columns"
+          direction="horizontal"
+          type="column"
+        >
+          {(provided) => (
+            <div
+              className="columns-container"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {data.columnOrder.map((columnId, index) => {
+                const column = data.columns[columnId];
+                const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
 
-              return (
-                <Column
-                  key={column.id}
-                  column={column}
-                  tasks={tasks}
-                  index={index}
-                />
-                // <InnerList
-                //   key={column.id}
-                //   column={column}
-                //   taskMap={data.tasks}
-                //   index={index}
-                // />
-              );
-            })}
-            {provided.placeholder}
-          </Container>
-        )}
-      </Droppable>
-    </DragDropContext>
+                return (
+                  <Column
+                    key={column.id}
+                    column={column}
+                    tasks={tasks}
+                    index={index}
+                    onDeleteTodo={onDeleteTodo}
+                  />
+                );
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </>
   );
 };
 

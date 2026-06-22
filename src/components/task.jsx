@@ -1,36 +1,25 @@
-import styled from 'styled-components';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable } from '@hello-pangea/dnd';
 
-const Container = styled.div`
-  border: 3px solid lightgrey;
-  padding: 8px;
-  margin-bottom: 8px;
-  border-radius: 2px;
-  background-color: ${(props) => (props.isDragging ? 'lightgreen' : 'white')};
-  display: flex;
-`;
-
-const Handle = styled.div`
-  width: 20px;
-  height: 20px;
-  background-color: orange;
-  border-radius: 4px;
-  margin-right: 8px;
-`;
-
-const Task = ({ task, index }) => {
+const Task = ({ task, index, onDeleteTodo }) => {
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
-        <Container
+        <div
+          className={`task${snapshot.isDragging ? ' task--dragging' : ''}`}
           {...provided.draggableProps}
-          {...provided.dragHandleProps}
           ref={provided.innerRef}
-          isDragging={snapshot.isDragging}
         >
-          <Handle {...provided.dragHandleProps} />
-          {task.content}
-        </Container>
+          <div className="task-handle" {...provided.dragHandleProps} />
+          <span className="task-content">{task.content}</span>
+          <button
+            className="delete-todo-button"
+            type="button"
+            onClick={() => onDeleteTodo(task.id)}
+            aria-label={`Delete ${task.content}`}
+          >
+            Delete
+          </button>
+        </div>
       )}
     </Draggable>
   );
